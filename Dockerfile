@@ -10,7 +10,8 @@ FROM node AS build
 
 WORKDIR /HSR-Warp-Simulator
 COPY --from=base /git/HSR-Warp-Simulator .
-RUN yarn && \
+RUN yarn add @sveltejs/vite-plugin-svelte@3.0.1 --dev && \
+    yarn && \
     export NODE_ENV=production && \
     yarn build
 
