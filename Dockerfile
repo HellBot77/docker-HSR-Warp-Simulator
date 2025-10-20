@@ -6,15 +6,14 @@ RUN git clone https://github.com/Mantan21/HSR-Warp-Simulator.git && \
     ([[ "$TAG" = "latest" ]] || git checkout ${TAG}) && \
     rm -rf .git
 
-FROM node AS build
+FROM --platform=$BUILDPLATFORM node:alpine AS build
 
 WORKDIR /HSR-Warp-Simulator
 COPY --from=base /git/HSR-Warp-Simulator .
-RUN yarn add @sveltejs/vite-plugin-svelte@3.0.1 --dev && \
-    yarn && \
-    export NODE_ENV=production && \
-    yarn build
+RUN npm install --global pnpm && \
+    pnpm install --frozen-lockfile && \
+    pnpm build
 
-FROM lipanski/docker-static-website
+FROM joseluisq/static-web-server
 
-COPY --from=build /HSR-Warp-Simulator/build .
+COPY --from=build /HSR-Warp-Simulator/build ./public
